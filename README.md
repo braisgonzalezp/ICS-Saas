@@ -697,7 +697,27 @@ GET /node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2 200 4.
 GET /api/events 200 6.159 ms - 216
 GET /favicon.ico 404 3.245 ms - 150
 ```
+# Documentación y despliegue de la práctica
+## Descripción del despliegue que se ha elegido
+> Opcion elegida: 2 (8 puntos)
+
+En esta práctica desplegaremos un contenedor con dos servicios(WordPress y SQL) mediante la utilización de docker-compose. Los recursos que se utilizarán para la realización de la practica serán
+
+  1. Azure WebApp: para lanzar el docker-compose sobre Azure App Service será necesario desplegarlo sobre      Azure WebApp.
+  2. Azure App Service: es un servicio basado en HTTP para hospedar aplicaciones web, API REST
+  y back-ends para dispositivos móviles. Las aplicaciones se ejecutan y escalan fácilmente en
+  los entornos basados tanto en Windows como en Linux.
 
 
+La comunicaión entre los dos servicios se haŕa de manera interna en el propio contenedor por lo que solo estará expuesto el puerto 80 al exterior.
+
+Para que la practica sea valida habra que:
+
+  - Generar un appservice en Linux
+  - Una vez generado el webapp es necesario fijar en su configuración los appsettings que le
+  indiquen la ruta y user/pass de vuestro azure container registry para que busque allí las
+  imágenes y no en DockerHub (por defecto)
+
+##Documentación de la práctica:
 
 
