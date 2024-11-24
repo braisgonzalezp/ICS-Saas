@@ -427,6 +427,113 @@ REPOSITORY                                     TAG       IMAGE ID       CREATED 
 bulletinboard                                  1.0       94c32d4df74e   About an hour ago   689MB
 miplanserviciobrais.azurecr.io/bulletinboard   v1        94c32d4df74e   About an hour ago   689MB
 ```
+Necesitamos habilitar el login ya que se trata de un repo privado, para ello activaremos el admin:
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master/node-bulletin-board/bulletin-board-app$ az acr update -n miplanserviciobrais --admin-enabled true
+{
+  "adminUserEnabled": true,
+  "anonymousPullEnabled": false,
+  "creationDate": "2024-11-24T19:16:09.296503+00:00",
+  "dataEndpointEnabled": false,
+  "dataEndpointHostNames": [],
+  "encryption": {
+    "keyVaultProperties": null,
+    "status": "disabled"
+  },
+  "id": "/subscriptions/17a8b9ab-44a3-45c0-bef4-c1ae78afaccb/resourceGroups/miGrupoRecursos/providers/Microsoft.ContainerRegistry/registries/miplanserviciobrais",
+  "identity": null,
+  "location": "westeurope",
+  "loginServer": "miplanserviciobrais.azurecr.io",
+  "metadataSearch": "Disabled",
+  "name": "miplanserviciobrais",
+  "networkRuleBypassOptions": "AzureServices",
+  "networkRuleSet": null,
+  "policies": {
+    "azureAdAuthenticationAsArmPolicy": {
+      "status": "enabled"
+    },
+    "exportPolicy": {
+      "status": "enabled"
+    },
+    "quarantinePolicy": {
+      "status": "disabled"
+    },
+    "retentionPolicy": {
+      "days": 7,
+      "lastUpdatedTime": "2024-11-24T19:16:17.690389+00:00",
+      "status": "disabled"
+    },
+    "softDeletePolicy": {
+      "lastUpdatedTime": "2024-11-24T19:16:17.690446+00:00",
+      "retentionDays": 7,
+      "status": "disabled"
+    },
+    "trustPolicy": {
+      "status": "disabled",
+      "type": "Notary"
+    }
+  },
+  "privateEndpointConnections": [],
+  "provisioningState": "Succeeded",
+  "publicNetworkAccess": "Enabled",
+  "resourceGroup": "miGrupoRecursos",
+  "sku": {
+    "name": "Basic",
+    "tier": "Basic"
+  },
+  "status": null,
+  "systemData": {
+    "createdAt": "2024-11-24T19:16:09.296503+00:00",
+    "createdBy": "brais.gonzalezp@udc.es",
+    "createdByType": "User",
+    "lastModifiedAt": "2024-11-24T19:30:53.003328+00:00",
+    "lastModifiedBy": "brais.gonzalezp@udc.es",
+    "lastModifiedByType": "User"
+  },
+  "tags": {},
+  "type": "Microsoft.ContainerRegistry/registries",
+  "zoneRedundancy": "Disabled"
+}
+```
+Como podemos ver en la consola de azure se ha activado correctamente:
+
+
+
+![Admin activado](img/IMAGEN3.png)
+
+
+
+Probamos ahora a hacer login desde la consola:
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master/node-bulletin-board/bulletin-board-app$ docker login miplanserviciobrais.azurecr.io
+Username: miplanserviciobrais
+Password: 
+Login Succeeded
+```
+Ahora ya podemos hacer el push:
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master/node-bulletin-board/bulletin-board-app$ docker push miplanserviciobrais.azurecr.io/bulletinboard:v1
+The push refers to repository [miplanserviciobrais.azurecr.io/bulletinboard]
+4992278b9852: Pushed 
+91e6543813c9: Pushed 
+38391c71900f: Pushed 
+10e7258451c2: Pushed 
+dd883cbb0cf7: Pushed 
+a3a3f69aebe8: Pushed 
+0da372da714b: Pushed 
+bf3841becf9d: Pushed 
+63866df00998: Pushed 
+2f9128310b77: Pushed 
+d9a5f9b8d5c2: Pushed 
+c01c63c6823d: Pushed 
+v1: digest: sha256:f1c2c38a32e53174971c576ea558a0ff2a5058277e32a2430b288ef3a1b63cee size: 2841
+```
+Y comprobamos que la imagen está subida en azure:
+
+![Imagen subida](img/IMAGEN4.png)
+![Imagen subida](img/IMAGEN5.png)
+
+
 
 
 
