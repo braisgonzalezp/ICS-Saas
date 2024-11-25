@@ -1236,3 +1236,27 @@ Por ultimo solo quedaría acceder al dominio en nuestro caso sería http://brais
 
 ![Nueva entrada](img/IMAGEN13.png)
 ![Nueva entrada2](img/IMAGEN14.png)
+
+## Probando la conexión de wordpress con MySQL
+Para ello nos instalaremos un plugin capaz de hacer consultas y ver las tablas almacenadas en MySql para de esta forma probar la persistencia.
+1. Lo primero sería instalar el plugin Adminer
+
+  ![Plugin](img/IMAGEN15.png)
+
+
+2. Al entrar en el plugin ya podemos observar como tenenmos acceso a todas las tablas
+
+  ![Tablas](img/IMAGEN16.png)
+
+3. Creamos una tabla de prueba llamada Brais y añadimos un elemento
+
+  ![Creamos tabla](img/IMAGEN17.png)
+  ![Añadimos](img/IMAGEN18.png)
+
+
+4. Recuperamos el elemento mediante una consulta
+
+![Recuperamos](img/IMAGEN19.png)
+
+
+Como podemos observar wordpress si está haciendo uso de mySql.
