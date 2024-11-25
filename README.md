@@ -887,8 +887,352 @@ cff044e18624: Pushed
 Y como podemos observar en la consola web de azure los cambios surtieron efecto:
 
 
-IMAGEN8.png
+![Cambios](img/IMAGEN8.png)
+
+A continuacion crearemos el app service que mencionamos en la descripción del despliegue, para ello. Que se ahrá de la siguiente forma:
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master/practica$ az appservice plan create --name braisgonzalez-appservice-plan --resource-group miGrupoRecursos --sku B1 --is-linux
+Readonly attribute name will be ignored in class <class 'azure.mgmt.web.v2023_01_01.models._models_py3.AppServicePlan'>
+Resource provider 'Microsoft.Web' used by this operation is not registered. We are registering for you.
+Registration succeeded.
+{
+  "elasticScaleEnabled": false,
+  "extendedLocation": null,
+  "freeOfferExpirationTime": "2025-05-25T19:00:55.206666",
+  "geoRegion": "West Europe",
+  "hostingEnvironmentProfile": null,
+  "hyperV": false,
+  "id": "/subscriptions/17a8b9ab-44a3-45c0-bef4-c1ae78afaccb/resourceGroups/miGrupoRecursos/providers/Microsoft.Web/serverfarms/braisgonzalez-appservice-plan",
+  "isSpot": false,
+  "isXenon": false,
+  "kind": "linux",
+  "kubeEnvironmentProfile": null,
+  "location": "westeurope",
+  "maximumElasticWorkerCount": 1,
+  "maximumNumberOfWorkers": 0,
+  "name": "braisgonzalez-appservice-plan",
+  "numberOfSites": 0,
+  "numberOfWorkers": 1,
+  "perSiteScaling": false,
+  "provisioningState": "Succeeded",
+  "reserved": true,
+  "resourceGroup": "miGrupoRecursos",
+  "sku": {
+    "capabilities": null,
+    "capacity": 1,
+    "family": "B",
+    "locations": null,
+    "name": "B1",
+    "size": "B1",
+    "skuCapacity": null,
+    "tier": "Basic"
+  },
+  "spotExpirationTime": null,
+  "status": "Ready",
+  "subscription": "17a8b9ab-44a3-45c0-bef4-c1ae78afaccb",
+  "tags": null,
+  "targetWorkerCount": 0,
+  "targetWorkerSizeId": 0,
+  "type": "Microsoft.Web/serverfarms",
+  "workerTierName": null,
+  "zoneRedundant": false
+}
+```
+Y despues, crearemos el webapp de la siguiente manera:
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master/practica$ az webapp create --name BraisGonzalezWebApp --plan braisgonzalez-appservice-plan --resource-group miGrupoRecursos --multicontainer-config-file docker-compose.yml --multicontainer-config-type COMPOSE
+{
+  "availabilityState": "Normal",
+  "clientAffinityEnabled": true,
+  "clientCertEnabled": false,
+  "clientCertExclusionPaths": null,
+  "clientCertMode": "Required",
+  "cloningInfo": null,
+  "containerSize": 0,
+  "customDomainVerificationId": "D5E187ADD7E9AC408E647FDBEC2C188FDB2AAF2756B19830C86E41DDDBD52FA5",
+  "dailyMemoryTimeQuota": 0,
+  "daprConfig": null,
+  "defaultHostName": "braisgonzalezwebapp.azurewebsites.net",
+  "enabled": true,
+  "enabledHostNames": [
+    "braisgonzalezwebapp.azurewebsites.net",
+    "braisgonzalezwebapp.scm.azurewebsites.net"
+  ],
+  "extendedLocation": null,
+  "ftpPublishingUrl": "ftps://waws-prod-am2-681.ftp.azurewebsites.windows.net/site/wwwroot",
+  "hostNameSslStates": [
+    {
+      "certificateResourceId": null,
+      "hostType": "Standard",
+      "ipBasedSslResult": null,
+      "ipBasedSslState": "NotConfigured",
+      "name": "braisgonzalezwebapp.azurewebsites.net",
+      "sslState": "Disabled",
+      "thumbprint": null,
+      "toUpdate": null,
+      "toUpdateIpBasedSsl": null,
+      "virtualIPv6": null,
+      "virtualIp": null
+    },
+    {
+      "certificateResourceId": null,
+      "hostType": "Repository",
+      "ipBasedSslResult": null,
+      "ipBasedSslState": "NotConfigured",
+      "name": "braisgonzalezwebapp.scm.azurewebsites.net",
+      "sslState": "Disabled",
+      "thumbprint": null,
+      "toUpdate": null,
+      "toUpdateIpBasedSsl": null,
+      "virtualIPv6": null,
+      "virtualIp": null
+    }
+  ],
+  "hostNames": [
+    "braisgonzalezwebapp.azurewebsites.net"
+  ],
+  "hostNamesDisabled": false,
+  "hostingEnvironmentProfile": null,
+  "httpsOnly": false,
+  "hyperV": false,
+  "id": "/subscriptions/17a8b9ab-44a3-45c0-bef4-c1ae78afaccb/resourceGroups/miGrupoRecursos/providers/Microsoft.Web/sites/BraisGonzalezWebApp",
+  "identity": null,
+  "inProgressOperationId": null,
+  "isDefaultContainer": null,
+  "isXenon": false,
+  "keyVaultReferenceIdentity": "SystemAssigned",
+  "kind": "app,linux,container",
+  "lastModifiedTimeUtc": "2024-11-25T19:02:41.073333",
+  "location": "West Europe",
+  "managedEnvironmentId": null,
+  "maxNumberOfWorkers": null,
+  "name": "BraisGonzalezWebApp",
+  "outboundIpAddresses": "20.73.127.255,20.76.64.122,20.76.65.118,20.73.127.254,20.76.65.248,20.76.65.249,20.105.224.34",
+  "possibleOutboundIpAddresses": "20.73.127.255,20.76.64.122,20.76.65.118,20.73.127.254,20.76.65.248,20.76.65.249,20.76.64.123,20.76.68.160,20.76.68.161,20.76.70.134,20.76.70.135,20.76.70.242,20.76.71.245,20.76.65.81,20.76.65.96,20.76.65.97,20.76.70.185,20.76.65.157,20.76.65.164,20.76.65.166,20.76.65.225,20.76.65.227,20.76.66.34,20.76.66.52,20.105.224.34",
+  "publicNetworkAccess": null,
+  "redundancyMode": "None",
+  "repositorySiteName": "BraisGonzalezWebApp",
+  "reserved": true,
+  "resourceConfig": null,
+  "resourceGroup": "miGrupoRecursos",
+  "scmSiteAlsoStopped": false,
+  "serverFarmId": "/subscriptions/17a8b9ab-44a3-45c0-bef4-c1ae78afaccb/resourceGroups/miGrupoRecursos/providers/Microsoft.Web/serverfarms/braisgonzalez-appservice-plan",
+  "siteConfig": {
+    "acrUseManagedIdentityCreds": false,
+    "acrUserManagedIdentityId": null,
+    "alwaysOn": false,
+    "antivirusScanEnabled": null,
+    "apiDefinition": null,
+    "apiManagementConfig": null,
+    "appCommandLine": null,
+    "appSettings": null,
+    "autoHealEnabled": null,
+    "autoHealRules": null,
+    "autoSwapSlotName": null,
+    "azureMonitorLogCategories": null,
+    "azureStorageAccounts": null,
+    "clusteringEnabled": false,
+    "connectionStrings": null,
+    "cors": null,
+    "customAppPoolIdentityAdminState": null,
+    "customAppPoolIdentityTenantState": null,
+    "defaultDocuments": null,
+    "detailedErrorLoggingEnabled": null,
+    "documentRoot": null,
+    "elasticWebAppScaleLimit": 0,
+    "experiments": null,
+    "fileChangeAuditEnabled": null,
+    "ftpsState": null,
+    "functionAppScaleLimit": null,
+    "functionsRuntimeScaleMonitoringEnabled": null,
+    "handlerMappings": null,
+    "healthCheckPath": null,
+    "http20Enabled": false,
+    "http20ProxyFlag": null,
+    "httpLoggingEnabled": null,
+    "ipSecurityRestrictions": [
+      {
+        "action": "Allow",
+        "description": "Allow all access",
+        "headers": null,
+        "ipAddress": "Any",
+        "name": "Allow all",
+        "priority": 2147483647,
+        "subnetMask": null,
+        "subnetTrafficTag": null,
+        "tag": null,
+        "vnetSubnetResourceId": null,
+        "vnetTrafficTag": null
+      }
+    ],
+    "ipSecurityRestrictionsDefaultAction": null,
+    "javaContainer": null,
+    "javaContainerVersion": null,
+    "javaVersion": null,
+    "keyVaultReferenceIdentity": null,
+    "limits": null,
+    "linuxFxVersion": "",
+    "loadBalancing": null,
+    "localMySqlEnabled": null,
+    "logsDirectorySizeLimit": null,
+    "machineKey": null,
+    "managedPipelineMode": null,
+    "managedServiceIdentityId": null,
+    "metadata": null,
+    "minTlsCipherSuite": null,
+    "minTlsVersion": null,
+    "minimumElasticInstanceCount": 0,
+    "netFrameworkVersion": null,
+    "nodeVersion": null,
+    "numberOfWorkers": 1,
+    "phpVersion": null,
+    "powerShellVersion": null,
+    "preWarmedInstanceCount": null,
+    "publicNetworkAccess": null,
+    "publishingPassword": null,
+    "publishingUsername": null,
+    "push": null,
+    "pythonVersion": null,
+    "remoteDebuggingEnabled": null,
+    "remoteDebuggingVersion": null,
+    "requestTracingEnabled": null,
+    "requestTracingExpirationTime": null,
+    "routingRules": null,
+    "runtimeADUser": null,
+    "runtimeADUserPassword": null,
+    "scmIpSecurityRestrictions": [
+      {
+        "action": "Allow",
+        "description": "Allow all access",
+        "headers": null,
+        "ipAddress": "Any",
+        "name": "Allow all",
+        "priority": 2147483647,
+        "subnetMask": null,
+        "subnetTrafficTag": null,
+        "tag": null,
+        "vnetSubnetResourceId": null,
+        "vnetTrafficTag": null
+      }
+    ],
+    "scmIpSecurityRestrictionsDefaultAction": null,
+    "scmIpSecurityRestrictionsUseMain": null,
+    "scmMinTlsCipherSuite": null,
+    "scmMinTlsVersion": null,
+    "scmSupportedTlsCipherSuites": null,
+    "scmType": null,
+    "sitePort": null,
+    "sitePrivateLinkHostEnabled": null,
+    "storageType": null,
+    "supportedTlsCipherSuites": null,
+    "tracingOptions": null,
+    "use32BitWorkerProcess": null,
+    "virtualApplications": null,
+    "vnetName": null,
+    "vnetPrivatePortsCount": null,
+    "vnetRouteAllEnabled": null,
+    "webSocketsEnabled": null,
+    "websiteTimeZone": null,
+    "winAuthAdminState": null,
+    "winAuthTenantState": null,
+    "windowsConfiguredStacks": null,
+    "windowsFxVersion": null,
+    "xManagedServiceIdentityId": null
+  },
+  "slotSwapStatus": null,
+  "state": "Running",
+  "storageAccountRequired": false,
+  "suspendedTill": null,
+  "tags": null,
+  "targetSwapSlot": null,
+  "trafficManagerHostNames": null,
+  "type": "Microsoft.Web/sites",
+  "usageState": "Normal",
+  "virtualNetworkSubnetId": null,
+  "vnetContentShareEnabled": false,
+  "vnetImagePullEnabled": false,
+  "vnetRouteAllEnabled": false,
+  "workloadProfileName": null
+}
+```
+Y ahora configuraremos la appweb para que acceda al registro de contenedores previamente creado:
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master/practica$ az webapp config container set --name BraisGonzalezWebApp --resource-group miGrupoRecursos --docker-registry-server-url miplanserviciobrais.azurecr.io --docker-registry-server-user miplanserviciobrais --docker-registry-server-password vU6rPyT0ZgSL2vqQiE6RikyoIM7McnNlSWxsV9c1iz+ACRARnFWR
+Option '--docker-registry-server-url' has been deprecated and will be removed in a future release. Use '--container-registry-url' instead.
+Option '--docker-registry-server-user' has been deprecated and will be removed in a future release. Use '--container-registry-user' instead.
+Option '--docker-registry-server-password' has been deprecated and will be removed in a future release. Use '--container-registry-password' instead.
+App settings have been redacted. Use `az webapp/logicapp/functionapp config appsettings list` to view.
+[
+  {
+    "name": "DOCKER_REGISTRY_SERVER_URL",
+    "slotSetting": false,
+    "value": "miplanserviciobrais.azurecr.io"
+  },
+  {
+    "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+    "slotSetting": false,
+    "value": "miplanserviciobrais"
+  },
+  {
+    "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+    "slotSetting": false,
+    "value": null
+  },
+  {
+    "name": "DOCKER_CUSTOM_IMAGE_NAME",
+    "value": "COMPOSE|dmVyc2lvbjogJzMnCgp2b2x1bWVzOgogIGRiOgogIHdvcmRwcmVzczoKCnNlcnZpY2VzOgogIGRiOgogICAgaW1hZ2U6IG15c3FsOjUuNwogICAgcmVzdGFydDogYWx3YXlzCiAgICBlbnZpcm9ubWVudDoKICAgICAgLSBNWVNRTF9ST09UX1BBU1NXT1JEPXJvb3QKICAgICAgLSBNWVNRTF9EQVRBQkFTRT13b3JkcHJlc3MKICAgICAgLSBNWVNRTF9VU0VSPXRlc3QKICAgICAgLSBNWVNRTF9QQVNTV09SRD10ZXN0CiAgICBwb3J0czoKICAgICAgLSAiMzMwNjozMzA2IgogICAgdm9sdW1lczoKICAgICAgLSBkYjovdmFyL2xpYi9teXNxbAoKICB3b3JkcHJlc3M6CiAgICBkZXBlbmRzX29uOgogICAgICAtIGRiCiAgICBpbWFnZTogd29yZHByZXNzOmxhdGVzdAogICAgcmVzdGFydDogYWx3YXlzCiAgICBlbnZpcm9ubWVudDoKICAgICAgLSBXT1JEUFJFU1NfREJfSE9TVD1kYjozMzA2CiAgICAgIC0gV09SRFBSRVNTX0RCX1VTRVI9dGVzdAogICAgICAtIFdPUkRQUkVTU19EQl9QQVNTV09SRD10ZXN0CiAgICAgIC0gV09SRFBSRVNTX0RCX05BTUU9d29yZHByZXNzCiAgICBwb3J0czoKICAgICAgLSAiODA4MDo4MCIKICAgIHZvbHVtZXM6CiAgICAgIC0gd29yZHByZXNzOi92YXIvd3d3L2h0bWwK"
+  }
+]
+```
+Por último es necesario hacer la aplicación persistente, ya que las aplicaciones multicontenedor lo necesitan para funcionar de forma correcta. Lo que hay que hacer para lograrlo es hacer que la configuración de Docker Compose debe apunte a una ubicación de almacenamiento
+fuera del contenedor. Para habilitarlo hay que:
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master/practica$ az webapp config appsettings set --resource-group miGrupoRecursos --name BraisGonzalezWebApp --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=TRUE
+App settings have been redacted. Use `az webapp/logicapp/functionapp config appsettings list` to view.
+[
+  {
+    "name": "DOCKER_REGISTRY_SERVER_URL",
+    "slotSetting": false,
+    "value": null
+  },
+  {
+    "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+    "slotSetting": false,
+    "value": null
+  },
+  {
+    "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+    "slotSetting": false,
+    "value": null
+  },
+  {
+    "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+    "slotSetting": false,
+    "value": null
+  }
+]
+```
+A continuación ya podemos comprobar que nuestra aplicación esta corriendo el la consola web de Azure:
 
 
+![APP corriendo](img/IMAGEN9.png)
 
 
+Por ultimo solo quedaría acceder al dominio en nuestro caso sería http://braisgonzalezwebapp.azurewebsites.net y configurar wordpress, de la siguiente manera:
+
+1. Elegimos el idioma:
+
+![idioma](img/IMAGEN10.png)
+
+2. Configuramos el sitio
+
+![Configuración](img/IMAGEN11.png)
+
+3. Iniciamos sesión
+
+![Inicio sesion](img/IMAGEN12.png)
+
+4. Creamos una nueva entrada en wordpress
+
+![Nueva entrada](img/IMAGEN13.png)
+![Nueva entrada2](img/IMAGEN14.png)
