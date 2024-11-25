@@ -718,6 +718,177 @@ Para que la practica sea valida habra que:
   indiquen la ruta y user/pass de vuestro azure container registry para que busque allí las
   imágenes y no en DockerHub (por defecto)
 
-##Documentación de la práctica:
+## Documentación de la práctica:
+Lo primero de todo será descargar las imágenes de WordPress y MySQL desde DockerHub:
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master$ docker pull wordpress:latest
+latest: Pulling from library/wordpress
+2d429b9e73a6: Pull complete 
+8e3574ead1d9: Pull complete 
+33ddd73cf168: Pull complete 
+03e622ab6113: Pull complete 
+3d465c9a467d: Pull complete 
+c99b33b2d2df: Pull complete 
+8944b2c2d493: Pull complete 
+b95e19029c21: Pull complete 
+3ecc49d93144: Pull complete 
+413b3a10b41e: Pull complete 
+93e37cdea03d: Pull complete 
+2c3cdaf28ff9: Pull complete 
+bebb38845b62: Pull complete 
+4f4fb700ef54: Pull complete 
+1062c4bf27a2: Pull complete 
+0f3c44dd6c5b: Pull complete 
+205f781f096b: Pull complete 
+147b34766441: Pull complete 
+cc509c872df2: Pull complete 
+a6ef3423d3cc: Pull complete 
+8bd2c82cab52: Pull complete 
+cdd30a8da961: Pull complete 
+Digest: sha256:cd3ff8311e62c3a5d95feaa502f8416d547d98af339b3384647d6fc2a9f76813
+Status: Downloaded newer image for wordpress:latest
+docker.io/library/wordpress:latest
+brais@braisGonzalez:~/Documentos/Azure/ics-master$ docker pull mysql:5.7
+5.7: Pulling from library/mysql
+20e4dcae4c69: Pull complete 
+1c56c3d4ce74: Pull complete 
+e9f03a1c24ce: Pull complete 
+68c3898c2015: Pull complete 
+6b95a940e7b6: Pull complete 
+90986bb8de6e: Pull complete 
+ae71319cb779: Pull complete 
+ffc89e9dfd88: Pull complete 
+43d05e938198: Pull complete 
+064b2d298fba: Pull complete 
+df9a4d85569b: Pull complete 
+Digest: sha256:4bc6bc963e6d8443453676cae56536f4b8156d78bae03c0145cbe47c2aad73bb
+Status: Downloaded newer image for mysql:5.7
+docker.io/library/mysql:5.7
+```
+Y a continuación podemos comprobar que se han descargado correctamente:
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master$ docker images
+REPOSITORY                                     TAG       IMAGE ID       CREATED         SIZE
+bulletinboard                                  1.0       94c32d4df74e   24 hours ago    689MB
+miplanserviciobrais.azurecr.io/bulletinboard   v1        94c32d4df74e   24 hours ago    689MB
+wordpress                                      latest    2d7bb61bd13c   3 days ago      701MB
+mysql
+```
+Una vez hecho esto esto necesitamos crear un docker-compose.yml que se encargará de gestionar los contenedores y sus recursos asociados:
+```bash
+version: '3'
+
+volumes:
+  db:
+  wordpress:
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=test
+    ports:
+      - "3306:3306"
+    volumes:
+      - db:/var/lib/mysql
+
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=db:3306
+      - WORDPRESS_DB_USER=test
+      - WORDPRESS_DB_PASSWORD=test
+      - WORDPRESS_DB_NAME=wordpress
+    ports:
+      - "8080:80"
+    volumes:
+      - wordpress:/var/www/html
+```
+Como podemos observar, especificamos que se van a desplegar dos servicios, el wordpress y mysql, además se creará un volumne asociado a cada servicio, configurando para MySQL, un usuario y base de
+datos de prueba, y exponiendo el puerto 3306. Por otro lado, tambien configuramos las variables de entorno para permitir a wordpress la conexión a mysql, y exponemos el servicio en nuestro puerto 8080 enlanzándolo con el puerto 80 del contenedor.
+
+A continuación tendríamos que configurar Azure y para ello, crear el grupo de recursos y el registro de contenedores. En nuestro caso ya están creados en el tutorial, sin embargo los comandos a seguir serían los siguientes:
+```bash
+az group create --name miGrupoRecursos --location "West Europe"
+az acr create --name miplanserviciobrais --resource-group
+miGrupoRecursos --sku Basic
+az acr login --name miplanserviciorbrais
+```
+Lo siguiente sería cagar las imágenes en el sistema de registro de contenedores, para lo cual es necesario hacer un tag de las imágenes:
+
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master/practica$ docker tag wordpress:latest miplanserviciobrais.azurecr.io/wordpress:latest
+brais@braisGonzalez:~/Documentos/Azure/ics-master/practica$ docker tag mysql:5.7 miplanserviciobrais.azurecr.io/mysql:5.7
+```
+Podemos observar el resultado:
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master/practica$ docker images
+REPOSITORY                                     TAG       IMAGE ID       CREATED         SIZE
+bulletinboard                                  1.0       94c32d4df74e   24 hours ago    689MB
+miplanserviciobrais.azurecr.io/bulletinboard   v1        94c32d4df74e   24 hours ago    689MB
+wordpress                                      latest    2d7bb61bd13c   3 days ago      701MB
+miplanserviciobrais.azurecr.io/wordpress       latest    2d7bb61bd13c   3 days ago      701MB
+mysql                                          5.7       5107333e08a8   11 months ago   501MB
+miplanserviciobrais.azurecr.io/mysql           5.7       5107333e08a8   11 months ago   501MB
+```
+A continuación iniciaremos sesión en el registro de contenedores de azure y pushearemos las imágenes:
+```bash
+brais@braisGonzalez:~/Documentos/Azure/ics-master/practica$ docker login miplanserviciobrais.azurecr.io
+Username: miplanserviciobrais
+Password: 
+Login Succeeded
+brais@braisGonzalez:~/Documentos/Azure/ics-master/practica$ docker push miplanserviciobrais.azurecr.io/wordpress:latest
+The push refers to repository [miplanserviciobrais.azurecr.io/wordpress]
+6f5fd5bafb34: Pushed 
+01079f02f5ed: Pushed 
+66c5204d2e9d: Pushed 
+8d0a94721237: Pushed 
+cf37ea0671a8: Pushed 
+a5776cd94686: Pushed 
+3d33297cbd82: Pushed 
+559e2d856e79: Pushed 
+5f70bf18a086: Pushed 
+8f638ab1d32b: Pushed 
+28f77e56d9c5: Pushed 
+ed5a99586453: Pushed 
+60e91fffce72: Pushed 
+ae88dccc5d2b: Pushed 
+c60d471531c1: Pushed 
+7227b6c8a3cb: Pushed 
+1393d37092ba: Pushed 
+0a8d603e281a: Pushed 
+a3606c464e19: Pushed 
+4e29311a3799: Pushed 
+b13704a409b2: Pushed 
+c3548211b826: Pushed 
+latest: digest: sha256:93783651b4ecb04a92e8567706ca8a783261a885848fde0b3a3613cd5ee1959e size: 4917
+brais@braisGonzalez:~/Documentos/Azure/ics-master/practica$ docker push miplanserviciobrais.azurecr.io/mysql:5.7
+The push refers to repository [miplanserviciobrais.azurecr.io/mysql]
+441e16cac4fe: Pushed 
+73cb62467b8f: Pushed 
+337ec6bae222: Pushed 
+532b66f4569d: Pushed 
+0d9e9a9ce9e4: Pushed 
+4555572a6bb2: Pushed 
+8527ccd6bd85: Pushed 
+d76a5f910f6b: Pushed 
+8b2952eb02aa: Pushed 
+7ff7abf4911b: Pushed 
+cff044e18624: Pushed 
+5.7: digest: sha256:4b6c4935195233bc10b617df3cc725a9ddd5a7f10351a7bf573bea0b5ded7649 size: 2618
+```
+Y como podemos observar en la consola web de azure los cambios surtieron efecto:
+
+
+IMAGEN8.png
+
+
 
 
